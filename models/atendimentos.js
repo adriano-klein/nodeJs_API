@@ -8,7 +8,7 @@ class Atendimentos {
       if (erro) {
         console.log(erro)
       } else {
-        console.los(resultados)
+        console.log(resultados)
       }
     })
   }
