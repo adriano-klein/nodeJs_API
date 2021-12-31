@@ -13,3 +13,5 @@ class Atendimentos {
     })
   }
 }
+
+module.exports = new Atendimentos
