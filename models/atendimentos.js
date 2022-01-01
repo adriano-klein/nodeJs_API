@@ -58,6 +58,12 @@ class Atendimentos {
     const sql = `SELECT * FROM Atendimentos WHERE id = ${id}`;
 
     conexao.query(sql, (erro, resultados) => {
+      const existeAtendimento = resultados.length;
+
+      if (!existeAtendimento) {
+        res.status(400).json({ message: "Atendimento não encontrado" });
+      }
+
       const atendimento = resultados[0];
 
       if (erro) {
