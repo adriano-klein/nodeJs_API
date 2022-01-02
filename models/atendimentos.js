@@ -74,7 +74,7 @@ class Atendimentos {
     });
   }
 
-  async altera(id, valores, res) {
+  altera(id, valores, res) {
     if (valores.data) {
       valores.data = moment(valores.data, "DD/MM/YYYY").format(
         "YYYY-MM-DD HH:MM:SS"
@@ -87,6 +87,18 @@ class Atendimentos {
         res.status(400).json(erro);
       } else {
         res.status(200).json(resultados);
+      }
+    });
+  }
+
+  deleta(id, res) {
+    const sql = "DELETE from Atendimentos WHERE id=?";
+
+    conexao.query(sql, id, (erro, resultados) => {
+      if (erro) {
+        res.status(400).json(erro);
+      } else {
+        res.status(200).json({ "Atendimento deletado com o ID": id });
       }
     });
   }
