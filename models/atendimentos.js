@@ -4,38 +4,55 @@ const axios = require("axios");
 const repository = require("../repositories/Atendimentos");
 
 class Atendimentos {
+  constructor() {
+    this.dataEhValida = ({ data, dataCriacao }) =>
+      moment(data).isSameOrAfter(dataCriacao);
+    this.clienteEhValido = ({ tamanho }) => tamanho >= 5;
+
+    this.valida = (parametros) =>
+      this.validacoes.filter((campo) => {
+        const { nome } = campo;
+        const parametro = parametros[nome];
+
+        return !campo.valido(parametro);
+      });
+
+    this.validacoes = [
+      {
+        nome: "data",
+        valido: this.dataEhValida,
+        mensagem: "Data deve ser maior ou igual a data atual",
+      },
+      {
+        nome: "cliente",
+        valido: this.clienteEhValido,
+        mensagem: "Cliente deve ter pelo menos cinco caracteres",
+      },
+    ];
+  }
+
   adiciona(atendimento) {
     const dataCriacao = moment().format("YYYY-MM-DD HH:MM:SS");
     const data = moment(atendimento.data, "DD/MM/YYYY").format(
       "YYYY-MM-DD HH:MM:SS"
     );
 
-    const dataValida = moment(data).isSameOrAfter(dataCriacao);
+    const parametros = {
+      data: { data, dataCriacao },
+      cliente: { tamanho: atendimento.cliente.length },
+    };
 
-    const clienteValido = atendimento.cliente.length >= 5;
+    const erros = this.valida(parametros);
 
-    const validacoes = [
-      {
-        nome: "data",
-        valido: dataValida,
-        mensagem: "A data deve ser maior ou igual a data atual",
-      },
-      {
-        nome: "cliente",
-        valido: clienteValido,
-        mensagem: "O nome do cliente deve ter pelo menos 5 caracteres",
-      },
-    ];
-    const erros = validacoes.filter((campo) => !campo.valido);
     const existemErros = erros.length;
 
-    if (existemErros > 0) {
+    if (existemErros) {
       return new Promise((resolve, reject) => reject(erros));
     } else {
       const atendimentoDatado = { ...atendimento, dataCriacao, data };
 
-      return repository.adiciona(atendimentoDatado).then((resultado) => {
-        const id = resultado.insertId;
+      return repository.adiciona(atendimentoDatado).then((resultados) => {
+        const id = resultados.insertId;
         return { ...atendimento, id };
       });
     }
