@@ -58,16 +58,8 @@ class Atendimentos {
     }
   }
 
-  lista(res) {
-    const sql = "SELECT * from Atendimentos";
-
-    conexao.query(sql, (erro, resultados) => {
-      if (erro) {
-        res.status(400).json(erro);
-      } else {
-        res.status(200).json(resultados);
-      }
-    });
+  lista() {
+    return repository.lista();
   }
 
   buscaPorId(id, res) {

@@ -5,6 +5,11 @@ class Atendimentos {
     const sql = "INSERT INTO Atendimentos SET ?";
     return query(sql, atendimento);
   }
+  lista() {
+    const sql = "SELECT * from Atendimentos";
+
+    return query(sql);
+  }
 }
 
 module.exports = new Atendimentos();
